@@ -32,9 +32,10 @@ public class Main {
                     if (slashCount == 4) { // comment began.. comment ended..
                         slashCount = 0;
                     }
-                } else if (slashCount >= 2 && slashCount < 4) { // ignores comments.. kinda ugly this way tbh...
-                    continue;
-                } else { // we're not in a comment..
+                } else {
+                    if (slashCount >= 2 && slashCount < 4) { // skip comments..
+                        continue;
+                    }
                     if (!Character.isWhitespace(c)) {
                         if (spaceCount == 0 && specialChars.indexOf(c) != -1) {
                             sb.append(" ");
