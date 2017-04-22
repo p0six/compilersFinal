@@ -38,9 +38,9 @@ public class Main {
                     }
                     if (!Character.isWhitespace(c)) {
                         if (spaceCount == 0 && specialChars.indexOf(c) != -1) {
-                            //sb.append(" ");
-                            sb.append(' ' + c + ' ');
-                            //sb.append(" ");
+                            sb.append(" ");
+                            sb.append(c);
+                            sb.append(" ");
                             spaceCount++;
                         } else {
                             spaceCount = 0;
