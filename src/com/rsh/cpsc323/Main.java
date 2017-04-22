@@ -5,8 +5,8 @@ import java.io.*;
 public class Main {
 
     private static void partOne(BufferedReader br, BufferedWriter bw) throws IOException {
-        String lineIn, specialChars = "():;,)=*/+-";
-        Character c;int slashCount = 0, spaceCount = 0;
+        String lineIn, specialChars = "():;,=*/+-";
+        Character c; int slashCount = 0, spaceCount = 0;
 
         System.out.println("===================================");
         System.out.println("| Part One Input:");
@@ -49,14 +49,14 @@ public class Main {
                     //sb.append('\n');
                 //} // rules say all blank lines must be removed, though it does not match sample output...
                 sb.append("\n");
-                System.out.println(sb.toString());
                 bw.write(sb.toString());
                 sb.delete(0, sb.length());
             }
         }
     }
 
-    private static boolean partTwo(BufferedReader br, BufferedWriter bw) throws IOException {
+    //private static boolean partTwo(BufferedReader br, BufferedWriter bw) throws IOException {
+    private static boolean partTwo(BufferedReader br) throws IOException {
         String lineIn;
         System.out.println("===================================");
         System.out.println("| Part Two Input:");
@@ -68,6 +68,16 @@ public class Main {
         return true;
     }
 
+    private static void partThree(BufferedReader br, BufferedWriter bw) throws IOException {
+        System.out.println("======================");
+        System.out.println("| Beginning Phase 3");
+        System.out.println("======================");
+        String lineIn;
+        while (br.ready()) {
+            lineIn = br.readLine();
+            System.out.println(lineIn); // back to the back with a reset buffer...
+        }
+    }
     public static void main(String[] args) throws IOException {
         // Part One
         BufferedReader br = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//S2017.txt"));
@@ -76,9 +86,8 @@ public class Main {
 
         // Part Two
         BufferedReader br2 = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv2.txt"));
-        BufferedWriter bw2 = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv3.txt"));
         br2.mark(1);
-        if (partTwo(br2, bw2)) {
+        if (partTwo(br2)) {
             System.out.println("==================================");
             System.out.println("| Accepted");
             System.out.println("==================================");
@@ -87,19 +96,12 @@ public class Main {
             System.out.println("| Rejected");
             System.out.println("==================================");
             return;
-        } bw2.close();
-
-        // At this point... we need to translate the input into a final language...
-        BufferedReader br3 = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv3.txt"));
-        br2.reset();
-        System.out.println("======================");
-        System.out.println("| Beginning Phase 3");
-        System.out.println("======================");
-        String lineIn;
-        while (br2.ready()) {
-            lineIn = br2.readLine();
-            System.out.println(lineIn); // back to the back with a reset buffer...
         }
-        br2.close(); br3.close();
+
+        // At this point.. we need to convert our validated input into Source Code
+        br2.reset();
+        BufferedWriter bw2 = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv3.txt"));
+        partThree(br2, bw2);
+        br2.close(); bw2.close();
     }
 }
