@@ -75,10 +75,10 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv2.txt"));
         partOne(br, bw); bw.close(); br.close();
 
-
         // Part Two
         BufferedReader br2 = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv2.txt"));
         BufferedWriter bw2 = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv3.txt"));
+        br2.mark(1);
         if (partTwo(br2, bw2)) {
             System.out.println("==================================");
             System.out.println("| Accepted");
@@ -88,10 +88,19 @@ public class Main {
             System.out.println("| Rejected");
             System.out.println("==================================");
             return;
-        } br2.close(); bw2.close();
+        } bw2.close();
 
         // At this point... we need to translate the input into a final language...
         BufferedReader br3 = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv3.txt"));
-        System.out.println("made it here...");
+        br2.reset();
+        System.out.println("======================");
+        System.out.println("| Beginning Phase 3");
+        System.out.println("======================");
+        String lineIn;
+        while (br2.ready()) {
+            lineIn = br2.readLine();
+            System.out.println(lineIn); // back to the back with a reset buffer...
+        }
+        br2.close(); br3.close();
     }
 }
