@@ -46,7 +46,6 @@ public class Main {
             }
             if (sb.length() != 0) {
                 //if (sb.toString().contains("PROGRAM")) {
-                    //lineOut += '\n';
                     //sb.append('\n');
                 //} // rules say all blank lines must be removed, though it does not match sample output...
                 sb.append("\n");
@@ -58,7 +57,7 @@ public class Main {
     }
 
     private static boolean partTwo(BufferedReader br, BufferedWriter bw) throws IOException {
-        String lineIn, lineOut;
+        String lineIn;
         System.out.println("===================================");
         System.out.println("| Part Two Input:");
         System.out.println("===================================");
