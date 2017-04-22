@@ -36,29 +36,29 @@ public class Main {
                     if (slashCount >= 2 && slashCount < 4) { // skip comments..
                         continue;
                     }
-                    if (!Character.isWhitespace(c)) {
-                        if (spaceCount == 0 && specialChars.indexOf(c) != -1) {
-                            sb.append(" ");
+                    if (!Character.isWhitespace(c)) { // not a whitespace char.  duh.
+                        if (spaceCount == 0 && specialChars.indexOf(c) != -1) { // ensures spaces in between special Chars
+                            sb.append(' ');
                             sb.append(c);
-                            sb.append(" ");
+                            sb.append(' ');
                             spaceCount++;
-                        } else {
+                        } else { // just another character.. nothing special
                             spaceCount = 0;
                             sb.append(c);
                         }
-                    } else {
-                        if (sb.length() != 0 && spaceCount == 0) {
+                    } else { // whitespace
+                        if (spaceCount == 0 && sb.length() != 0) {
                             spaceCount++;
-                            sb.append(" ");
+                            sb.append(' ');
                         }
                     }
                 }
             }
-            if (sb.length() != 0) {
+            if (sb.length() != 0) { // we have a string. write to file. all whitespace and nonsense filtered out above
                 //if (sb.toString().contains("PROGRAM")) {
                     //sb.append('\n');
                 //} // rules say all blank lines must be removed, though it does not match sample output...
-                sb.append("\n");
+                sb.append('\n'); // what line string is complete without a carriage return
                 bw.write(sb.toString());
                 sb.delete(0, sb.length());
             }
