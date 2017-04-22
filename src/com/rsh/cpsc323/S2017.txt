@@ -1,6 +1,6 @@
 PROGRAM S2017;
 // This program computes and prints the value
-Of an expression //
+    Of an expression //
 
 //declare variables //
 INTEGER: P1 ,   Q23 ,   R, S12  ;
