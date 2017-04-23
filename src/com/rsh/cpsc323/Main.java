@@ -121,14 +121,15 @@ public class Main {
         boolean accepted = true;
         myStack.push("$");System.out.println("stack: " + myStack.toString());
         myStack.push("A");System.out.println("stack: " + myStack.toString());
-        //String varHolder, tableValue, readValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
-        String varHolder, tableValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
+        String tableValue, lineArray[], tableValueSplitter[], lhsHolder;
         Character charHolder;
+        begin:
         while (br.ready() && accepted && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
                 lhsHolder = myStack.pop(); // A.... "pop: E " // B
+
                 System.out.println("WORD: \"" + readValue + "\""); // S2017
                 while (!lhsHolder.equals(readValue)) { // this probably needs to change too?
                     if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
@@ -136,14 +137,26 @@ public class Main {
                             charHolder = readValue.charAt(j); // S 2 0 1 7 // 2
                             System.out.println("CHAR: " + charHolder);
                             while (!lhsHolder.equals(charHolder.toString()))  { // S 2 0 1 7
+
+                                if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(charHolder.toString()) == null) {
+                                    accepted = false;
+                                    break begin;
+                                }
+
+                                /*
+                                System.out.println("lhsHolder = " + lhsHolder);
+                                System.out.println("charHolder.toString() = " + charHolder.toString());
+                                System.out.println("lhsMap.get(lhsHolder) = " + lhsMap.get(lhsHolder));
+                                System.out.println("rhsMap.get(charHolder.toString()) = " + rhsMap.get(charHolder.toString()));
+                                */
+
                                 tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
+
                                 if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
                                     lhsHolder = myStack.pop(); // A.... "pop: E "
                                     continue;
-                                } else if (tableValue.equals("")) {
-                                    accepted = false;
-                                    break;
                                 }
+
                                 tableValueSplitter = tableValue.split("\\s+"); // tableValueSplitter = {Z, C}
                                 for (int k = tableValueSplitter.length - 1; k >= 0; k--) {
                                     myStack.push(tableValueSplitter[k]); // "push Q, T"
@@ -157,14 +170,17 @@ public class Main {
                         }
                         break;
                     } else {
+
+                        if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(readValue) == null) {
+                            accepted = false;
+                            break begin;
+                        }
+
                         tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
 
                         if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
                             lhsHolder = myStack.pop(); // A.... "pop: E "
                             continue;
-                        } else if (tableValue.equals("")) {
-                            accepted = false;
-                            break;
                         }
 
                         tableValueSplitter = tableValue.split("\\s+");
