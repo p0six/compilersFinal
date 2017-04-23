@@ -18,7 +18,7 @@ public class Main {
 
     private static String rhsIndex[] = {";",")","+","-","*","/",",","(","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","END.","INTEGER","PRINT",":","$","BEGIN"};
     private static String lhsIndex[] = {"A","B","C","D","G","H","I","J","K","L","M","N","E","O","T","U","F","V","W","X","Y","Z"};
-    private static String[][] predictiveTable = { // Unused columns: ":", "BEGIN", "$", maybe shouldn't have removed these? good for error detection
+    private static String[][] predictiveTable = { // Unused columns: ":", "BEGIN", "$", moved to the end of table... kept just in case
             //00 01  02      03      04      05      06    07      08        09        10        11        12      13      14      15      16      17      18      19      20      21       22                          23    24        25              26 27 28
             //;  )   +       -       *       /       ,     (       P         Q         R         S         0       1       2       3       4       5       6       7       8       9        PROGRAM                     END.  INTEGER   PRINT           :  $  BEGIN
 /* 00 A */  {"" ,"" ,""     ,""     ,""     ,""     ,""   ,""     ,""       ,""       ,""       ,""       ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,"PROGRAM B ; D BEGIN J END.",""   ,""       ,""             ,"","",""}, // 00 | A
@@ -101,16 +101,13 @@ public class Main {
         String lhsHolder;
         String tableValueSplitter[];
         if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
-            lhsHolder = myStack.pop(); // A.... "pop: E "
-            System.out.println("stack: " + myStack.toString());
+            lhsHolder = myStack.pop(); System.out.println("stack: " + myStack.toString()); // A.... "pop: E "
         } else {
             tableValueSplitter = tableValue.split("\\s+");
             for (int j = tableValueSplitter.length - 1; j >= 0; j--) {
-                myStack.push(tableValueSplitter[j]); // "push Q, T"
-                System.out.println("stack: " + myStack.toString());
+                myStack.push(tableValueSplitter[j]); System.out.println("stack: " + myStack.toString()); // "push Q, T"
             }
-            lhsHolder = myStack.pop(); // A.... "pop: E "
-            System.out.println("stack: " + myStack.toString());
+            lhsHolder = myStack.pop(); System.out.println("stack: " + myStack.toString()); // A.... "pop: E "
         }
         return lhsHolder;
     }
@@ -133,14 +130,13 @@ public class Main {
         System.out.println("===================================");
         System.out.println("| Beginning Part Two:");
         System.out.println("===================================");
-        myStack.push("$");System.out.println("stack: " + myStack.toString());
-        myStack.push("A");System.out.println("stack: " + myStack.toString());
+        myStack.push("$"); System.out.println("stack: " + myStack.toString());
+        myStack.push("A"); System.out.println("stack: " + myStack.toString());
         while (br.ready() && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
-                lhsHolder = myStack.pop(); // "pop: E "
-                System.out.println("stack: " + myStack.toString());
+                lhsHolder = myStack.pop(); System.out.println("stack: " + myStack.toString()); // "pop: E "
                 System.out.println("WORD: \"" + readValue + "\"");
                 while (!lhsHolder.equals(readValue)) {
                     if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
@@ -155,8 +151,7 @@ public class Main {
                                     lhsHolder = doWork(tableValue, myStack);
                                 }
                             }
-                            lhsHolder = myStack.pop(); // "pop: E "
-                            System.out.println("stack: " + myStack.toString());
+                            lhsHolder = myStack.pop(); System.out.println("stack: " + myStack.toString()); // "pop: E "
                         }
                         break; // takes us out of parsing characters to parsing words
                     } else {
