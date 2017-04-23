@@ -10,42 +10,39 @@ package com.rsh.cpsc323;
  */
 
 import java.io.*;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 
 public class Main {
 
+    private static String rhsIndex[] = {";",")","+","-","*","/",",","(",":","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","BEGIN","END.","INTEGER","PRINT","$"};
+    private static String lhsIndex[] = {"A","B","C","D","G","H","I","J","K","L","M","N","E","O","T","U","F","V","W","X","Y","Z"};
     private static String[][] predictiveTable = { // Painfully Long Predictive Parsing Table
             //00 01  02    03    04    05    06   07    08 09       10       11       12       13    14    15    16    17    18    19    20    21    22     23                         24    25    26        27           28
             //;  )   +     -     *     /     ,    (     :  P        Q        R        S        0     1     2     3     4     5     6     7     8     9      PROGRAM                    BEGIN END.  INTEGER   PRINT        $
-/* 00 A */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,"PROGRAM B: D BEGIN J END.",""   ,""   ,""       ,""          ,""}, // 00 | A
-/* 01 B */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","ZC"    ,"ZC"    ,"ZC"    ,"ZC"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 01 | B
-/* 02 C */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,"^" ,"^"  ,"","ZC"    ,"ZC"    ,"ZC"    ,"ZC"    ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,""                         ,""   ,""   ,""       ,""          ,""}, // 02 | C
-/* 03 D */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,"I : G;" ,""          ,""}, // 03 | D
-/* 04 G */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","BH"    ,"BH"    ,"BH"    ,"BH"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 04 | G
-/* 05 H */  {"^","" ,""   ,""   ,""   ,""   ,",G",""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 05 | H
-/* 06 I */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,"INTEGER",""          ,""}, // 06 | I
-/* 07 J */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","LK"    ,"LK"    ,"LK"    ,"LK"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"LK"        ,""}, // 07 | J
-/* 08 K */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","J"     ,"J"     ,"J"     ,"J"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,"^"  ,""       ,"J"         ,""}, // 08 | K
-/* 09 L */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","N"     ,"N"     ,"N"     ,"N"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"M"         ,""}, // 09 | L
-/* 10 M */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"PRINT (B);",""}, // 10 | M
-/* 11 N */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","B = E;","B = E;","B = E;","B = E;",""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 11 | N
-/* 12 E */  {"" ,"" ,"TO" ,"TO" ,""   ,""   ,""  ,"TO" ,"","TO"    ,"TO"    ,"TO"    ,"TO"    ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,""                         ,""   ,""   ,""       ,""          ,""}, // 12 | E
-/* 13 O */  {"^","^","+TO","-TO",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 13 | O
-/* 14 T */  {"" ,"" ,"FU" ,"FU" ,""   ,""   ,""  ,"FU" ,"","FU"    ,"FU"    ,"FU"    ,"FU"    ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,""                         ,""   ,""   ,""       ,""          ,""}, // 14 | T
-/* 15 U */  {"^","^","^"  ,"^"  ,"*FU","/FU",""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 15 | U
-/* 16 F */  {"" ,"" ,"V"  ,"V"  ,""   ,""   ,""  ,"(E)","","B"     ,"B"     ,"B"     ,"B"     ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 16 | F
-/* 17 V */  {"" ,"" ,"WYX","WYX",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX",""                         ,""   ,""   ,""       ,""          ,""}, // 17 | V
-/* 18 W */  {"" ,"" ,"+"  ,"-"  ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 18 | W
-/* 19 X */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,""  ,""   ,"",""      ,""      ,""      ,""      ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,""                         ,""   ,""   ,""       ,""          ,""}, // 19 | X
-/* 20 Y */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"0"  ,"1"  ,"2"  ,"3"  ,"4"  ,"5"  ,"6"  ,"7"  ,"8"  ,"9"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 20 | Y
-/* 21 Z */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","P"     ,"Q"     ,"R"     ,"S"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""} // 21 | Z
+/* 00 A */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,"PROGRAM B ; D BEGIN J END.",""   ,""   ,""        ,""             ,""}, // 00 | A
+/* 01 B */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","Z C"    ,"Z C"    ,"Z C"    ,"Z C"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 01 | B
+/* 02 C */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,"^" ,"^"  ,"","Z C"    ,"Z C"    ,"Z C"    ,"Z C"    ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,"Y C" ,""                          ,""   ,""   ,""        ,""             ,""}, // 02 | C
+/* 03 D */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,"I : G ;" ,""             ,""}, // 03 | D
+/* 04 G */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","B H"    ,"B H"    ,"B H"    ,"B H"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 04 | G
+/* 05 H */  {"^","" ,""   ,""   ,""   ,""   ,", G",""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 05 | H
+/* 06 I */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,"INTEGER" ,""             ,""}, // 06 | I
+/* 07 J */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","L K"    ,"L K"    ,"L K"    ,"L K"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,"L K"           ,""}, // 07 | J
+/* 08 K */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","J"     ,"J"     ,"J"     ,"J"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,"^"  ,""        ,"J"            ,""}, // 08 | K
+/* 09 L */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","N"     ,"N"     ,"N"     ,"N"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,"M"            ,""}, // 09 | L
+/* 10 M */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,"PRINT ( B ) ;",""}, // 10 | M
+/* 11 N */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","B = E ;","B = E ;","B = E ;","B = E ;",""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 11 | N
+/* 12 E */  {"" ,"" ,"T O" ,"T O" ,""   ,""   ,""  ,"T O" ,"","T O"    ,"T O"    ,"T O"    ,"T O"    ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,"T O" ,""                          ,""   ,""   ,""        ,""             ,""}, // 12 | E
+/* 13 O */  {"^","^","+ T O","- T O",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 13 | O
+/* 14 T */  {"" ,"" ,"F U" ,"F U" ,""   ,""   ,""  ,"F U" ,"","F U"    ,"F U"    ,"F U"    ,"F U"    ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,"F U" ,""                          ,""   ,""   ,""        ,""             ,""}, // 14 | T
+/* 15 U */  {"^","^","^"  ,"^"  ,"* F U","/ F U",""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""}, // 15 | U
+/* 16 F */  {"" ,"" ,"V"  ,"V"  ,""   ,""   ,""  ,"( E )","","B"     ,"B"     ,"B"     ,"B"     ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,""                          ,""   ,""   ,""        ,""             ,""}, // 16 | F
+/* 17 V */  {"" ,"" ,"W Y X","W Y X",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"W Y X","W Y X","W Y X","W Y X","W Y X","W Y X","W Y X","W Y X","W Y X","W Y X",""                          ,""   ,""   ,""        ,""             ,""}, // 17 | V
+/* 18 W */  {"" ,"" ,"+"  ,"-"  ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,""                          ,""   ,""   ,""        ,""             ,""}, // 18 | W
+/* 19 X */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,""  ,""   ,"",""      ,""      ,""      ,""      ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,"Y X" ,""                          ,""   ,""   ,""        ,""             ,""}, // 19 | X
+/* 20 Y */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"0"  ,"1"  ,"2"  ,"3"  ,"4"  ,"5"  ,"6"  ,"7"  ,"8"  ,"9"  ,""                          ,""   ,""   ,""        ,""             ,""}, // 20 | Y
+/* 21 Z */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","P"     ,"Q"     ,"R"     ,"S"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                          ,""   ,""   ,""        ,""             ,""} // 21 | Z
     }; // predictiveTable[29][22]
-
-
-
-
-
-
 
     private static void partOne(BufferedReader br, BufferedWriter bw) throws IOException {
         String lineIn, specialChars = "():;,=*/+-";
@@ -105,20 +102,90 @@ public class Main {
 
     private static boolean partTwo(BufferedReader br) throws IOException {
         // This gives us an easy way to get some indexes....
-        HashMap<String,Integer> myMap = new HashMap<>();
-        for (int i = 0; i < stringIndex.length; i++) {
-            myMap.put(stringIndex[i], i);
+        HashMap<String,Integer> rhsMap = new HashMap<>();
+        for (int i = 0; i < rhsIndex.length; i++) {
+            rhsMap.put(rhsIndex[i], i);
         }
 
+        HashMap<String,Integer> lhsMap = new HashMap<>();
+        for (int i = 0; i < lhsIndex.length; i++) {
+            lhsMap.put(lhsIndex[i], i);
+        }
+
+        ArrayDeque<String> myStack = new ArrayDeque<>();
         String lineIn;
         System.out.println("===================================");
-        System.out.println("| Part Two Input:");
+        System.out.println("| Beginning Part Two:");
         System.out.println("===================================");
         br.mark(1);
-        while (br.ready()) {
+        boolean accepted = true;
+        myStack.push("$");System.out.println("stack: " + myStack.toString());
+        myStack.push("A");System.out.println("stack: " + myStack.toString());
+        String varHolder, tableValue, readValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
+        Character charHolder;
+        while (br.ready() && accepted && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
-            System.out.println(lineIn);
-        }
+            lineArray = lineIn.split("\\s+");
+            for (int i = 0; i < lineArray.length; i++) {
+                readValue = lineArray[i]; // "read (" // S2017
+                lhsHolder = myStack.pop(); // A.... "pop: E " // B
+                System.out.println("WORD: \"" + readValue + "\""); // S2017
+
+                while (!lhsHolder.equals(readValue)) { // this probably needs to change too?
+
+
+                    // need to make sure for the line below... al identifiers, ala P1, Q23, R, S12 are treated as such...
+                    // don't forget about this... this is a temporary HACK until we come up with a better conditional to distinguish IDENTIFIER's
+
+
+                    // if (rhsMap.get(readValue) == null) { // rhsMap.get(S2017) is null... .. split up into rhsMap.get(S) rhsMap.get(2) etc..
+                    if(rhsMap.get(readValue) == null || readValue.equals("R")) {
+
+                    //if (rhsMap.get(readValue) == null || readValue.equals("R")) { // rhsMap.get(S2017) is null... .. split up into rhsMap.get(S) rhsMap.get(2) etc..
+
+
+
+                        for (int j = 0; j < readValue.length(); j++) { // for each of the chars in the identifier... S 2 0 1 7
+                            charHolder = readValue.charAt(j); // S 2 0 1 7 // 2
+                            System.out.println("CHAR: " + charHolder);
+                            while (!lhsHolder.equals(charHolder.toString()))  { // S 2 0 1 7
+                                tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
+                                if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
+                                    lhsHolder = myStack.pop(); // A.... "pop: E "
+                                    continue;
+                                }
+                                tableValueSplitter = tableValue.split("\\s+"); // tableValueSplitter = {Z, C}
+                                for (int k = tableValueSplitter.length - 1; k >= 0; k--) {
+                                    myStack.push(tableValueSplitter[k]); // "push Q, T"
+                                    System.out.println("stack: " + myStack.toString());
+                                } // Pushes vars on stack correctly... in reverse order.
+                                lhsHolder = myStack.pop(); // A.... "pop: E "
+                                System.out.println("stack: " + myStack.toString());
+                            }
+                            lhsHolder = myStack.pop(); // A.... "pop: E "
+                            System.out.println("stack: " + myStack.toString());
+                        }
+                        break;
+                    } else {
+                        tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
+
+                        if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
+                            lhsHolder = myStack.pop(); // A.... "pop: E "
+                            continue;
+                        }
+
+                        tableValueSplitter = tableValue.split("\\s+");
+                        for (int j = tableValueSplitter.length - 1; j >= 0; j--) {
+                            myStack.push(tableValueSplitter[j]); // "push Q, T"
+                            System.out.println("stack: " + myStack.toString());
+                        }
+                        lhsHolder = myStack.pop(); // A.... "pop: E "
+                        System.out.println("stack: " + myStack.toString());
+                    }
+                } // end while lhsHolder != readValue || lhsHolder != "^"
+                System.out.println("stack: " + myStack.toString());
+            } // end for length of line - split all words
+        } // end while - no more lines to read
         br.reset();
         return true;
     }
@@ -134,17 +201,29 @@ public class Main {
         }
     }
 
-    private static String stringIndex[] = {";",")","+","-","*","/",",","(",":","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","BEGIN","END.","INTEGER","PRINT","$"};
-
     public static void main(String[] args) throws IOException {
         // Part One
+
+        //System.out.println("predictiveTable.length = " + predictiveTable.length) ; // 29
+        //System.out.println("predictiveTable[0].length = " + predictiveTable[0].length) ; // 29
+        //System.exit(0);
+
         BufferedReader br = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//S2017.txt"));
         BufferedWriter bw = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv2.txt"));
         partOne(br, bw); bw.close(); br.close();
 
-        // Part Two
+        // Display Results of Part One
         BufferedReader br2 = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv2.txt"));
         br2.mark(1);
+        System.out.println("==================================");
+        System.out.println("| Results from Part One");
+        System.out.println("==================================");
+        while (br2.ready()) {
+            System.out.println(br2.readLine()); // back to the back with a reset buffer...
+        }
+        br2.reset();
+
+        // Part 2
         if (partTwo(br2)) {
             System.out.println("==================================");
             System.out.println("| Accepted");
