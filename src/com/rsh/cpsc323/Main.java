@@ -118,7 +118,7 @@ public class Main {
     private static boolean partTwo(BufferedReader br) throws IOException {
         br.mark(1);
         String lineIn, tableValue, lhsHolder, lineArray[];
-        Character charHolder; boolean accepted = true;
+        Character charHolder;
         ArrayDeque<String> myStack = new ArrayDeque<>();
 
         HashMap<String,Integer> rhsMap = new HashMap<>(); // This gives us an easy way to get some indexes....
@@ -135,7 +135,7 @@ public class Main {
         System.out.println("===================================");
         myStack.push("$");System.out.println("stack: " + myStack.toString());
         myStack.push("A");System.out.println("stack: " + myStack.toString());
-        while (br.ready() && accepted && !myStack.peek().equals("$")) {
+        while (br.ready() && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
@@ -149,7 +149,7 @@ public class Main {
                             System.out.println("CHAR: " + charHolder);
                             while (!lhsHolder.equals(charHolder.toString()))  {
                                 if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(charHolder.toString()) == null) {
-                                    accepted = false;
+                                    return false;
                                 } else {
                                     tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ"
                                     lhsHolder = doWork(tableValue, myStack);
@@ -158,20 +158,20 @@ public class Main {
                             lhsHolder = myStack.pop(); // "pop: E "
                             System.out.println("stack: " + myStack.toString());
                         }
-                        break;
+                        break; // takes us out of parsing characters to parsing words
                     } else {
                         if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(readValue) == null) {
-                            accepted = false;
+                            return false;
                         } else {
                             tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ"
                             lhsHolder = doWork(tableValue, myStack);
                         }
-                    }
+                    } // conditional to check for identifier types
                 } // end while lhsHolder != readValue
             } // end for length of line - split all words
         } // end while - no more lines to read
         br.reset();
-        return accepted;
+        return true;
     }
 
     private static void partThree(BufferedReader br, BufferedWriter bw) throws IOException { // Austin? :P
