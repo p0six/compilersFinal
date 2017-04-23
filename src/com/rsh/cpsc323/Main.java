@@ -19,7 +19,7 @@ public class Main {
     private static String rhsIndex[] = {";",")","+","-","*","/",",","(","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","END.","INTEGER","PRINT"};
     private static String lhsIndex[] = {"A","B","C","D","G","H","I","J","K","L","M","N","E","O","T","U","F","V","W","X","Y","Z"};
     private static String[][] predictiveTable = { // Removed unused columns: ":", "BEGIN", "$"
-            //00 01  02      03      04      05      06    07      09        10        11        12        13      14      15      16      17      18      19      20      21      22       23                          25    26        27
+            //00 01  02      03      04      05      06    07      08        09        10        11        12      13      14      15      16      17      18      19      20      21       22                          23    24        25
             //;  )   +       -       *       /       ,     (       P         Q         R         S         0       1       2       3       4       5       6       7       8       9        PROGRAM                     END.  INTEGER   PRINT
 /* 00 A */  {"" ,"" ,""     ,""     ,""     ,""     ,""   ,""     ,""       ,""       ,""       ,""       ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,"PROGRAM B ; D BEGIN J END.",""   ,""       ,""             }, // 00 | A
 /* 01 B */  {"" ,"" ,""     ,""     ,""     ,""     ,""   ,""     ,"Z C"    ,"Z C"    ,"Z C"    ,"Z C"    ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""                          ,""   ,""       ,""             }, // 01 | B
@@ -43,7 +43,7 @@ public class Main {
 /* 19 X */  {"^","^","^"    ,"^"    ,"^"    ,"^"    ,""   ,""     ,""       ,""       ,""       ,""       ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,"Y X"  ,""                          ,""   ,""       ,""             }, // 19 | X
 /* 20 Y */  {"" ,"" ,""     ,""     ,""     ,""     ,""   ,""     ,""       ,""       ,""       ,""       ,"0"    ,"1"    ,"2"    ,"3"    ,"4"    ,"5"    ,"6"    ,"7"    ,"8"    ,"9"    ,""                          ,""   ,""       ,""             }, // 20 | Y
 /* 21 Z */  {"" ,"" ,""     ,""     ,""     ,""     ,""   ,""     ,"P"      ,"Q"      ,"R"      ,"S"      ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""     ,""                          ,""   ,""       ,""             }  // 21 | Z
-    }; // predictiveTable[29][22]
+    };
 
     private static void partOne(BufferedReader br, BufferedWriter bw) throws IOException {
         String lineIn, specialChars = "():;,=*/+-";
@@ -57,7 +57,7 @@ public class Main {
             lineIn = br.readLine();
             System.out.println(lineIn);
 
-            for (int i = 0; i < lineIn.length(); i++) { // step 1: trim all whitespace...
+            for (int i = 0; i < lineIn.length(); i++) { // remove comments, trim whitespace
                 c = lineIn.charAt(i);
                 if (c == '/') { // let's handle comments..
                     slashCount++;
@@ -170,7 +170,7 @@ public class Main {
                             lhsHolder = doWork(tableValue, myStack);
                         }
                     }
-                } // end while lhsHolder != readValue || lhsHolder != "^"
+                } // end while lhsHolder != readValue
             } // end for length of line - split all words
         } // end while - no more lines to read
         br.reset();
