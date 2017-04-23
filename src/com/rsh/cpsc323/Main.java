@@ -99,7 +99,23 @@ public class Main {
             }
         }
     }
-
+    private static String doWork(String tableValue, ArrayDeque<String> myStack) {
+        String lhsHolder;
+        String tableValueSplitter[];
+        if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
+            lhsHolder = myStack.pop(); // A.... "pop: E "
+            System.out.println("stack: " + myStack.toString());
+        } else {
+            tableValueSplitter = tableValue.split("\\s+");
+            for (int j = tableValueSplitter.length - 1; j >= 0; j--) {
+                myStack.push(tableValueSplitter[j]); // "push Q, T"
+                System.out.println("stack: " + myStack.toString());
+            }
+            lhsHolder = myStack.pop(); // A.... "pop: E "
+            System.out.println("stack: " + myStack.toString());
+        }
+        return lhsHolder;
+    }
     private static boolean partTwo(BufferedReader br) throws IOException {
         // This gives us an easy way to get some indexes....
         HashMap<String,Integer> rhsMap = new HashMap<>();
@@ -121,13 +137,14 @@ public class Main {
         boolean accepted = true;
         myStack.push("$");System.out.println("stack: " + myStack.toString());
         myStack.push("A");System.out.println("stack: " + myStack.toString());
-        String tableValue, lineArray[], tableValueSplitter[], lhsHolder;
+        String tableValue, lineArray[], lhsHolder;
         Character charHolder;
         while (br.ready() && accepted && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
                 lhsHolder = myStack.pop(); // A.... "pop: E " // B
+                System.out.println("stack: " + myStack.toString());
                 System.out.println("WORD: \"" + readValue + "\""); // S2017
                 while (!lhsHolder.equals(readValue)) { // this probably needs to change too?
                     if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
@@ -139,17 +156,7 @@ public class Main {
                                     accepted = false;
                                 } else {
                                     tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
-                                    if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
-                                        lhsHolder = myStack.pop(); // A.... "pop: E "
-                                        continue;
-                                    }
-                                    tableValueSplitter = tableValue.split("\\s+"); // tableValueSplitter = {Z, C}
-                                    for (int k = tableValueSplitter.length - 1; k >= 0; k--) {
-                                        myStack.push(tableValueSplitter[k]); // "push Q, T"
-                                        System.out.println("stack: " + myStack.toString());
-                                    } // Pushes vars on stack correctly... in reverse order.
-                                    lhsHolder = myStack.pop(); // A.... "pop: E "
-                                    System.out.println("stack: " + myStack.toString());
+                                    lhsHolder = doWork(tableValue, myStack);
                                 }
                             }
                             lhsHolder = myStack.pop(); // A.... "pop: E "
@@ -161,17 +168,7 @@ public class Main {
                             accepted = false;
                         } else {
                             tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
-                            if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
-                                lhsHolder = myStack.pop(); // A.... "pop: E "
-                                continue;
-                            }
-                            tableValueSplitter = tableValue.split("\\s+");
-                            for (int j = tableValueSplitter.length - 1; j >= 0; j--) {
-                                myStack.push(tableValueSplitter[j]); // "push Q, T"
-                                System.out.println("stack: " + myStack.toString());
-                            }
-                            lhsHolder = myStack.pop(); // A.... "pop: E "
-                            System.out.println("stack: " + myStack.toString());
+                            lhsHolder = doWork(tableValue, myStack);
                         }
                     }
                 } // end while lhsHolder != readValue || lhsHolder != "^"
@@ -194,9 +191,9 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        // Part One
         BufferedReader br = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//S2017.txt"));
         BufferedWriter bw = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv2.txt"));
+        // Part One
         partOne(br, bw); bw.close(); br.close();
         // Display Results of Part One
         br = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//finalv2.txt"));
@@ -220,9 +217,9 @@ public class Main {
             System.out.println("==================================");
             return;
         }
+        br.reset();
 
         // At this point.. we need to convert our validated input into Source Code
-        br.reset();
         bw = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv3.txt"));
         partThree(br, bw); // Begin Part 3
         br.close(); bw.close();
