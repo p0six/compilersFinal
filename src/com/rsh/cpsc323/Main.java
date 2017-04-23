@@ -2,11 +2,12 @@ package com.rsh.cpsc323;
 
 /*
  * Name			Michael Romero, Austin Suarez, Sean Hillenbrand
+ * CPSC 323     Compilers and Languages
  * Project No.	10 - Final Project
  * Due Date		END OF SEMESTER!
  * Professor	Ray Ahmadnia
  *
- * Purpose:		A bastardized compiler. Using either LR method or whatever we call the first method..
+ * Purpose:		A predictive parsing table driven compiler.
  */
 
 import java.io.*;
