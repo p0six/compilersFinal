@@ -146,7 +146,7 @@ public class Main {
                 lhsHolder = myStack.pop(); // A.... "pop: E " // B
                 System.out.println("stack: " + myStack.toString());
                 System.out.println("WORD: \"" + readValue + "\""); // S2017
-                while (!lhsHolder.equals(readValue)) { // this probably needs to change too?
+                while (!lhsHolder.equals(readValue)) {
                     if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
                         for (int j = 0; j < readValue.length(); j++) { // for each of the chars in the identifier... S 2 0 1 7
                             charHolder = readValue.charAt(j); // S 2 0 1 7 // 2
@@ -172,7 +172,6 @@ public class Main {
                         }
                     }
                 } // end while lhsHolder != readValue || lhsHolder != "^"
-                System.out.println("stack: " + myStack.toString());
             } // end for length of line - split all words
         } // end while - no more lines to read
         br.reset();
