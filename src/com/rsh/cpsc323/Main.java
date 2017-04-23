@@ -214,7 +214,6 @@ public class Main {
             System.out.println("==================================");
             return;
         }
-        br.reset();
 
         // At this point.. we need to convert our validated input into Source Code
         bw = new BufferedWriter(new FileWriter(".//src//com//rsh/cpsc323/finalv3.txt"));
