@@ -121,30 +121,17 @@ public class Main {
         boolean accepted = true;
         myStack.push("$");System.out.println("stack: " + myStack.toString());
         myStack.push("A");System.out.println("stack: " + myStack.toString());
-        String varHolder, tableValue, readValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
+        //String varHolder, tableValue, readValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
+        String varHolder, tableValue, lineArray[], tableValueSplitter[], lhsHolder, rhsHolder = "";
         Character charHolder;
         while (br.ready() && accepted && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
-            for (int i = 0; i < lineArray.length; i++) {
-                readValue = lineArray[i]; // "read (" // S2017
+            for (String readValue : lineArray) {
                 lhsHolder = myStack.pop(); // A.... "pop: E " // B
                 System.out.println("WORD: \"" + readValue + "\""); // S2017
-
                 while (!lhsHolder.equals(readValue)) { // this probably needs to change too?
-
-
-                    // need to make sure for the line below... al identifiers, ala P1, Q23, R, S12 are treated as such...
-                    // don't forget about this... this is a temporary HACK until we come up with a better conditional to distinguish IDENTIFIER's
-
-
-                    // if (rhsMap.get(readValue) == null) { // rhsMap.get(S2017) is null... .. split up into rhsMap.get(S) rhsMap.get(2) etc..
-                    if(rhsMap.get(readValue) == null || readValue.equals("R")) {
-
-                    //if (rhsMap.get(readValue) == null || readValue.equals("R")) { // rhsMap.get(S2017) is null... .. split up into rhsMap.get(S) rhsMap.get(2) etc..
-
-
-
+                    if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
                         for (int j = 0; j < readValue.length(); j++) { // for each of the chars in the identifier... S 2 0 1 7
                             charHolder = readValue.charAt(j); // S 2 0 1 7 // 2
                             System.out.println("CHAR: " + charHolder);
@@ -153,6 +140,9 @@ public class Main {
                                 if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
                                     lhsHolder = myStack.pop(); // A.... "pop: E "
                                     continue;
+                                } else if (tableValue.equals("")) {
+                                    accepted = false;
+                                    break;
                                 }
                                 tableValueSplitter = tableValue.split("\\s+"); // tableValueSplitter = {Z, C}
                                 for (int k = tableValueSplitter.length - 1; k >= 0; k--) {
@@ -172,6 +162,9 @@ public class Main {
                         if (tableValue.equals("^")) { // handle lambda by ignoring and moving on..
                             lhsHolder = myStack.pop(); // A.... "pop: E "
                             continue;
+                        } else if (tableValue.equals("")) {
+                            accepted = false;
+                            break;
                         }
 
                         tableValueSplitter = tableValue.split("\\s+");
@@ -187,7 +180,7 @@ public class Main {
             } // end for length of line - split all words
         } // end while - no more lines to read
         br.reset();
-        return true;
+        return accepted;
     }
 
     private static void partThree(BufferedReader br, BufferedWriter bw) throws IOException {
