@@ -116,49 +116,46 @@ public class Main {
     }
 
     private static boolean partTwo(BufferedReader br) throws IOException {
-        // This gives us an easy way to get some indexes....
-        HashMap<String,Integer> rhsMap = new HashMap<>();
+        br.mark(1);
+        String lineIn, tableValue, lhsHolder, lineArray[];
+        Character charHolder; boolean accepted = true;
+        ArrayDeque<String> myStack = new ArrayDeque<>();
+
+        HashMap<String,Integer> rhsMap = new HashMap<>(); // This gives us an easy way to get some indexes....
         for (int i = 0; i < rhsIndex.length; i++) {
             rhsMap.put(rhsIndex[i], i);
         }
-
         HashMap<String,Integer> lhsMap = new HashMap<>();
         for (int i = 0; i < lhsIndex.length; i++) {
             lhsMap.put(lhsIndex[i], i);
         }
 
-        ArrayDeque<String> myStack = new ArrayDeque<>();
-        String lineIn;
         System.out.println("===================================");
         System.out.println("| Beginning Part Two:");
         System.out.println("===================================");
-        br.mark(1);
-        boolean accepted = true;
         myStack.push("$");System.out.println("stack: " + myStack.toString());
         myStack.push("A");System.out.println("stack: " + myStack.toString());
-        String tableValue, lineArray[], lhsHolder;
-        Character charHolder;
         while (br.ready() && accepted && !myStack.peek().equals("$")) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
-                lhsHolder = myStack.pop(); // A.... "pop: E " // B
+                lhsHolder = myStack.pop(); // "pop: E "
                 System.out.println("stack: " + myStack.toString());
-                System.out.println("WORD: \"" + readValue + "\""); // S2017
+                System.out.println("WORD: \"" + readValue + "\"");
                 while (!lhsHolder.equals(readValue)) {
                     if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
-                        for (int j = 0; j < readValue.length(); j++) { // for each of the chars in the identifier... S 2 0 1 7
-                            charHolder = readValue.charAt(j); // S 2 0 1 7 // 2
+                        for (int j = 0; j < readValue.length(); j++) { // for each char in the <identifier>
+                            charHolder = readValue.charAt(j); // S // 2 // 0 // 1 // 7
                             System.out.println("CHAR: " + charHolder);
-                            while (!lhsHolder.equals(charHolder.toString()))  { // S 2 0 1 7
+                            while (!lhsHolder.equals(charHolder.toString()))  {
                                 if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(charHolder.toString()) == null) {
                                     accepted = false;
                                 } else {
-                                    tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
+                                    tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(charHolder.toString())]; // "[E,(] = TQ"
                                     lhsHolder = doWork(tableValue, myStack);
                                 }
                             }
-                            lhsHolder = myStack.pop(); // A.... "pop: E "
+                            lhsHolder = myStack.pop(); // "pop: E "
                             System.out.println("stack: " + myStack.toString());
                         }
                         break;
@@ -166,7 +163,7 @@ public class Main {
                         if (lhsHolder.equals("") || lhsMap.get(lhsHolder) == null || rhsMap.get(readValue) == null) {
                             accepted = false;
                         } else {
-                            tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ" // will choke here // shoudln't be loooking up [B][S2017]
+                            tableValue = predictiveTable[lhsMap.get(lhsHolder)][rhsMap.get(readValue)]; // "[E,(] = TQ"
                             lhsHolder = doWork(tableValue, myStack);
                         }
                     }
