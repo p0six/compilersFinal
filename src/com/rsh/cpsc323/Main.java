@@ -10,8 +10,42 @@ package com.rsh.cpsc323;
  */
 
 import java.io.*;
+import java.util.HashMap;
 
 public class Main {
+
+    private static String[][] predictiveTable = { // Painfully Long Predictive Parsing Table
+            //00 01  02    03    04    05    06   07    08 09       10       11       12       13    14    15    16    17    18    19    20    21    22     23                         24    25    26        27           28
+            //;  )   +     -     *     /     ,    (     :  P        Q        R        S        0     1     2     3     4     5     6     7     8     9      PROGRAM                    BEGIN END.  INTEGER   PRINT        $
+/* 00 A */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,"PROGRAM B: D BEGIN J END.",""   ,""   ,""       ,""          ,""}, // 00 | A
+/* 01 B */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","ZC"    ,"ZC"    ,"ZC"    ,"ZC"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 01 | B
+/* 02 C */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,"^" ,"^"  ,"","ZC"    ,"ZC"    ,"ZC"    ,"ZC"    ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,"YC" ,""                         ,""   ,""   ,""       ,""          ,""}, // 02 | C
+/* 03 D */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,"I : G;" ,""          ,""}, // 03 | D
+/* 04 G */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","BH"    ,"BH"    ,"BH"    ,"BH"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 04 | G
+/* 05 H */  {"^","" ,""   ,""   ,""   ,""   ,",G",""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 05 | H
+/* 06 I */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,"INTEGER",""          ,""}, // 06 | I
+/* 07 J */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","LK"    ,"LK"    ,"LK"    ,"LK"    ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"LK"        ,""}, // 07 | J
+/* 08 K */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","J"     ,"J"     ,"J"     ,"J"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,"^"  ,""       ,"J"         ,""}, // 08 | K
+/* 09 L */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","N"     ,"N"     ,"N"     ,"N"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"M"         ,""}, // 09 | L
+/* 10 M */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,"PRINT (B);",""}, // 10 | M
+/* 11 N */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","B = E;","B = E;","B = E;","B = E;",""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 11 | N
+/* 12 E */  {"" ,"" ,"TO" ,"TO" ,""   ,""   ,""  ,"TO" ,"","TO"    ,"TO"    ,"TO"    ,"TO"    ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,"TO" ,""                         ,""   ,""   ,""       ,""          ,""}, // 12 | E
+/* 13 O */  {"^","^","+TO","-TO",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 13 | O
+/* 14 T */  {"" ,"" ,"FU" ,"FU" ,""   ,""   ,""  ,"FU" ,"","FU"    ,"FU"    ,"FU"    ,"FU"    ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,"FU" ,""                         ,""   ,""   ,""       ,""          ,""}, // 14 | T
+/* 15 U */  {"^","^","^"  ,"^"  ,"*FU","/FU",""  ,""   ,"",""      ,""      ,""      ,""      ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""}, // 15 | U
+/* 16 F */  {"" ,"" ,"V"  ,"V"  ,""   ,""   ,""  ,"(E)","","B"     ,"B"     ,"B"     ,"B"     ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,"V"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 16 | F
+/* 17 V */  {"" ,"" ,"WYX","WYX",""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX","WYX",""                         ,""   ,""   ,""       ,""          ,""}, // 17 | V
+/* 18 W */  {"" ,"" ,"+"  ,"-"  ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,"^"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 18 | W
+/* 19 X */  {"^","^","^"  ,"^"  ,"^"  ,"^"  ,""  ,""   ,"",""      ,""      ,""      ,""      ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,"YX" ,""                         ,""   ,""   ,""       ,""          ,""}, // 19 | X
+/* 20 Y */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"",""      ,""      ,""      ,""      ,"0"  ,"1"  ,"2"  ,"3"  ,"4"  ,"5"  ,"6"  ,"7"  ,"8"  ,"9"  ,""                         ,""   ,""   ,""       ,""          ,""}, // 20 | Y
+/* 21 Z */  {"" ,"" ,""   ,""   ,""   ,""   ,""  ,""   ,"","P"     ,"Q"     ,"R"     ,"S"     ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""   ,""                         ,""   ,""   ,""       ,""          ,""} // 21 | Z
+    }; // predictiveTable[29][22]
+
+
+
+
+
+
 
     private static void partOne(BufferedReader br, BufferedWriter bw) throws IOException {
         String lineIn, specialChars = "():;,=*/+-";
@@ -42,6 +76,10 @@ public class Main {
                             sb.append(c);
                             sb.append(' ');
                             spaceCount++;
+                        } else if (specialChars.indexOf(c) != -1) { // special char following a space.
+                            sb.append(c);
+                            sb.append(' '); // "P1 = - 3" vs "P1 = -3". this produces the former.
+                            spaceCount = 1;
                         } else { // just another character.. nothing special
                             spaceCount = 0;
                             sb.append(c);
@@ -66,14 +104,22 @@ public class Main {
     }
 
     private static boolean partTwo(BufferedReader br) throws IOException {
+        // This gives us an easy way to get some indexes....
+        HashMap<String,Integer> myMap = new HashMap<>();
+        for (int i = 0; i < stringIndex.length; i++) {
+            myMap.put(stringIndex[i], i);
+        }
+
         String lineIn;
         System.out.println("===================================");
         System.out.println("| Part Two Input:");
         System.out.println("===================================");
+        br.mark(1);
         while (br.ready()) {
             lineIn = br.readLine();
             System.out.println(lineIn);
         }
+        br.reset();
         return true;
     }
 
@@ -87,6 +133,9 @@ public class Main {
             System.out.println(lineIn); // back to the back with a reset buffer...
         }
     }
+
+    private static String stringIndex[] = {";",")","+","-","*","/",",","(",":","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","BEGIN","END.","INTEGER","PRINT","$"};
+
     public static void main(String[] args) throws IOException {
         // Part One
         BufferedReader br = new BufferedReader(new FileReader(".//src//com//rsh//cpsc323//S2017.txt"));
