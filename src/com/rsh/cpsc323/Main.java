@@ -95,6 +95,7 @@ public class Main {
             }
         }
     }
+
     private static String doWork(String tableValue, ArrayDeque<String> myStack) {
         String lhsHolder;
         String tableValueSplitter[];
@@ -112,6 +113,7 @@ public class Main {
         }
         return lhsHolder;
     }
+
     private static boolean partTwo(BufferedReader br) throws IOException {
         // This gives us an easy way to get some indexes....
         HashMap<String,Integer> rhsMap = new HashMap<>();
