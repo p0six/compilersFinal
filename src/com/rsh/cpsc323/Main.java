@@ -82,7 +82,7 @@ public class Main {
                                         i++;
                                     }
                                 }
-                                sb.append(' '); // "P1 = - 3" vs "P1 = -3". this produces the former.
+                                sb.append(' ');
                                 spaceCount++;
                             } else { // just another character.. nothing special
                                 spaceCount = 0;
