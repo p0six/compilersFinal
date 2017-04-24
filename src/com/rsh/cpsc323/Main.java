@@ -47,7 +47,7 @@ public class Main {
 
     private static void partOne(BufferedReader br, BufferedWriter bw) throws IOException {
         String lineIn, specialChars = "():;,=*/+-$";
-        Character c; int slashCount = 0, spaceCount = 0;
+        Character c, d; int slashCount = 0, spaceCount = 0;
 
         System.out.println("===================================");
         System.out.println("| Part One Input:");
@@ -72,18 +72,26 @@ public class Main {
                                 sb.append(c);
                                 sb.append(' ');
                                 spaceCount++;
-                            } else if (specialChars.indexOf(c) != -1) { // special char following a space.
+                            } else if (specialChars.indexOf(c) != -1) { // handling negative and positive assignments
                                 sb.append(c);
+                                if ((i + 1) < lineIn.length()) {
+                                    d = lineIn.charAt(i+1);
+                                    if ((c.equals('-') || c.equals('+')) && Character.isDigit(d)) {
+                                        System.out.println("WE IN HERE");
+                                        sb.append(d);
+                                        i++;
+                                    }
+                                }
                                 sb.append(' '); // "P1 = - 3" vs "P1 = -3". this produces the former.
-                                spaceCount = 1;
+                                spaceCount++;
                             } else { // just another character.. nothing special
                                 spaceCount = 0;
                                 sb.append(c);
                             }
                         } else { // whitespace
                             if (spaceCount == 0 && sb.length() != 0) {
-                                spaceCount++;
                                 sb.append(' ');
+                                spaceCount++;
                             }
                         }
                     }
@@ -113,6 +121,7 @@ public class Main {
     }
 
     private static boolean partTwo(BufferedReader br) throws IOException {
+        // Initialization Stuff..
         br.mark(1);
         String lineIn, tableValue, lhsHolder, lineArray[];
         Character charHolder;
@@ -126,13 +135,15 @@ public class Main {
         for (int i = 0; i < lhsIndex.length; i++) {
             lhsMap.put(lhsIndex[i], i);
         }
+        // Initialized...
 
         System.out.println("===================================");
         System.out.println("| Beginning Part Two:");
         System.out.println("===================================");
         myStack.push("$"); System.out.println("stack: " + myStack.toString());
         myStack.push("A"); System.out.println("stack: " + myStack.toString());
-        while (br.ready() && !myStack.peek().equals("$")) {
+        //while (br.ready() && !myStack.peek().equals("$")) {
+        while (br.ready()) {
             lineIn = br.readLine();
             lineArray = lineIn.split("\\s+");
             for (String readValue : lineArray) {
