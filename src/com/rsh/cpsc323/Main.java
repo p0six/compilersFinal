@@ -194,14 +194,69 @@ public class Main {
     }
 
     private static void partThree(BufferedReader br, BufferedWriter bw) throws IOException { // Austin? :P
+       System.out.println("======================");
+        System.out.println("| Translation Phase 3");
         System.out.println("======================");
-        System.out.println("| Beginning Phase 3");
-        System.out.println("======================");
+        System.out.println("see program.txt");
+        Boolean begin = false;
         String lineIn;
-        while (br.ready()) {
+        FileWriter writer = new FileWriter("program.txt");
+        
+        
+        while (br.ready())
+        {
             lineIn = br.readLine();
-            System.out.println(lineIn); // back to the back with a reset buffer...
+            if(lineIn.contains("PROGRAM"))
+            {
+                writer.write("#include <isostream>\n");
+                writer.write("using namespace std;\n");
+                writer.write("int main()\n");
+                writer.write("{\n");
+            }
+            if(lineIn.contains("INTEGER :"))
+            {
+                writer.write("\tint");
+                writer.write(lineIn.substring(9)+"\n");
+            }
+            if(lineIn.contains("BEGIN"))
+            {
+                begin = true;
+            }
+            if(lineIn.contains("END"))
+            {
+                begin = false;
+                writer.write("\treturn 0\n");
+                writer.write("}\n");
+            }
+            if(begin && !lineIn.contains("BEGIN"))
+            {
+                if(lineIn.contains("PRINT"))
+                {
+                    writer.write("\tcout<<");
+                    lineIn = lineIn.replace('(', ' ');
+                    
+                    lineIn = lineIn.replace(')', ' ');
+                    for(int index = 6; index < lineIn.length()-3; index++)
+                    {
+                        if(lineIn.charAt(index) != ' ')
+                        {
+                            writer.write(lineIn.charAt(index));
+                        }
+                    }
+                    writer.write("<<endl;\n");
+                }
+                else
+                {
+                    if(!lineIn.contains("BEGIN"))
+                    {
+                        writer.write('\t'+lineIn+"\n");
+                    }
+                }
+            }
+            
         }
+        writer.close();
+
     }
 
     public static void main(String[] args) throws IOException {
