@@ -208,7 +208,7 @@ public class Main {
             lineIn = br.readLine();
             if(lineIn.contains("PROGRAM"))
             {
-                writer.write("#include <isostream>\n");
+                writer.write("#include <iostream>\n");
                 writer.write("using namespace std;\n");
                 writer.write("int main()\n");
                 writer.write("{\n");
