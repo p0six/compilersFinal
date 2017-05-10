@@ -316,7 +316,6 @@ public class Main {
         }
 
         // At this point.. we need to convert our validated input into Source Code
-        bw = new BufferedWriter(new FileWriter(".//src//com//rsh//cpsc323//finalv3.txt"));
         partThree(br); // Begin Part 3
         br.close(); bw.close();
     }
