@@ -151,29 +151,29 @@ public class Main {
             for (int i = 0; i < lineArray.length; i++) {
                 readValue = lineArray[i];
                 System.out.println("Word: " + readValue);
+
                 // Checks for ";" at the end of each line except in the case of BEGIN or END. since those do not have ";" at end.
                 if(i == lineArray.length - 1 && !readValue.equals(";") && !readValue.equals("BEGIN") && !readValue.equals("END.")) {
                     System.out.println("ERROR ( line " + lineCounter + " ): ; is missing");
                     return false;
                 }
+
                 read = false;
                 while(!read){
                     stackHolder = myStack.pop();
-                    System.out.println("stackHolder = " + stackHolder);
                     System.out.println("stack: " + myStack.toString());
-                    if(stackHolder.contains("55")){																	   // Checks for illegal expression
-                        if(readValue.equals("(")){																 	   // Checks for PRINT
+                    if(stackHolder.contains("55")){	// Checks for illegal expression
+                        if(readValue.equals("(")){ // Checks for PRINT
                             System.out.println("ERROR ( line " + lineCounter + " ): PRINT is expected");
                         } else {
                             System.out.println("ERROR ( line " + lineCounter + " ): illegal expression");
                         }
                         return false;
-                    }
-                    else if(stackHolder.equals("^")) { // Checks for lambda and moves to next word
-                        System.out.println("Lambda encountered");
-                    } else if(stackHolder.equals(readValue)){              											   // Checks for an input match
-                        if(stackHolder.equals(";")){																   // Checks if input is a ;
-                            state++;																				   // Increments the state
+                    } else if(stackHolder.equals("^")) { // Checks for lambda and moves to next word
+                        System.out.println("Lambda encountered.. skipping");
+                    } else if(stackHolder.equals(readValue)){ // Checks for an input match
+                        if(stackHolder.equals(";")){ // Checks if input is a ;
+                            state++; // Increments the state
                         }
                         break;
                     } else if(rhsMap.get(stackHolder) != null){ //  Checks if stackHolder is a member of rhsMap
@@ -223,7 +223,7 @@ public class Main {
                                 }
                                 stackHolder = myStack.pop();
                                 System.out.println("stack: " + myStack.toString());
-                                read = true;																		   // Allows reader to read next word
+                                read = true; // Allows reader to read next word
                             }
                         } else if ((stackHolder.equals("J") && !variableList.contains(readValue)) && !rhsMap.containsKey(readValue)) {
                             System.out.println("ERROR ( line " + lineCounter + " ): Unknown identifier");
@@ -237,8 +237,8 @@ public class Main {
             } // end for length of line - split all words
             lineCounter++;
         } // end while - no more lines to read
-        //checks for END. at end of file
-        if(state >= 3 && !readValue.equals("END.")){
+
+        if(state >= 3 && !readValue.equals("END.")){ //checks for END. at end of file
             System.out.println("ERROR ( line " + lineCounter + " ): END. is expected");
             return false;
         } else {
@@ -258,6 +258,7 @@ public class Main {
 
         while (br.ready())
         {
+            // using new if's instead of else if's in case input is a single line
             lineIn = br.readLine();
             if(lineIn.contains("PROGRAM")) {
                 writer.write("#include <iostream>\n");
@@ -267,7 +268,7 @@ public class Main {
             }
             if(lineIn.contains("INTEGER :")) {
                 writer.write("\tint");
-                writer.write(lineIn.substring(9) + "\n"); // this may be a problem...
+                writer.write(lineIn.substring(9) + "\n");
             }
             if(lineIn.contains("BEGIN")) {
                 begin = true;
@@ -313,7 +314,6 @@ public class Main {
             System.out.println(br.readLine()); // back to the back with a reset buffer...
         }
         br.reset();
-        //System.exit(0);
 
         // Part 2
         if (partTwo(br)) {
