@@ -164,12 +164,10 @@ public class Main {
                     if(stackHolder.contains("55")){																	   // Checks for illegal expression
                         if(readValue.equals("(")){																 	   // Checks for PRINT
                             System.out.println("ERROR ( line " + lineCounter + " ): PRINT is expected");
-                            return false;
-                        }
-                        else{
+                        } else {
                             System.out.println("ERROR ( line " + lineCounter + " ): illegal expression");
-                            return false;
                         }
+                        return false;
                     }
                     else if(stackHolder.equals("^")) { // Checks for lambda and moves to next word
                         System.out.println("Lambda encountered");
@@ -178,25 +176,20 @@ public class Main {
                             state++;																				   // Increments the state
                         }
                         break;
-                    }
-                    else if(rhsMap.get(stackHolder) != null){														   //  Checks if stackHolder is a member of rhsMap
+                    } else if(rhsMap.get(stackHolder) != null){ //  Checks if stackHolder is a member of rhsMap
                         System.out.println("ERROR ( line " + lineCounter + " ): " + stackHolder + " is expected or missing");
                         return false;
-                    }
-                    else {
-                        if(stackHolder.equals("A") && !readValue.equals("PROGRAM")){ 						 		   // Checks for missing program at beginning of program
+                    } else {
+                        if(stackHolder.equals("A") && !readValue.equals("PROGRAM")){ // Checks for missing program at beginning of program
                             System.out.println("ERROR ( line " + lineCounter + " ): PROGRAM is expected");
                             return false;
-                        }
-                        else if(stackHolder.equals("D") && !readValue.equals("INTEGER")){ 							   // Checks for missing INTEGER at beginning of line
+                        } else if(stackHolder.equals("D") && !readValue.equals("INTEGER")){ // Checks for missing INTEGER at beginning of line
                             System.out.println("ERROR ( line " + lineCounter + " ): INTEGER is expected");
                             return false;
-                        }
-                        else if(stackHolder.equals("H") && !readValue.equals(",") && !readValue.equals(";")){ 		   // Checks for missing comma in integer section
+                        } else if(stackHolder.equals("H") && !readValue.equals(",") && !readValue.equals(";")){ // Checks for missing comma in integer section
                             System.out.println("ERROR ( line " + lineCounter + " ): , is missing");
                             return false;
-                        }
-                        else if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
+                        } else if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
                             if ((stackHolder.equals("J") && !rhsMap.containsKey(readValue))) {
                                 System.out.println("Intercepting odd case");
                             } else if (((stackHolder.equals("Z")) && !variableList.contains(readValue))) { // added temp
@@ -212,9 +205,8 @@ public class Main {
                                 if(stackHolder.contains("55") || rhsMap.get("" + readValue.charAt(readIter)) == null){ // Checks if not a valid character in table
                                     System.out.println("ERROR ( line " + lineCounter + " ): Invalid identifier");
                                     return false;
-                                }
-                                else if(stackHolder.equals("" + readValue.charAt(readIter))){						   // Checks for input match
-                                    readIter++;																		   // Increments the read iterator
+                                } else if(stackHolder.equals("" + readValue.charAt(readIter))){ // Checks for input match
+                                    readIter++;	// Increments the read iterator
                                     if(readIter == readValue.length()){
                                         if(state <= 1 && Character.isLetter(readValue.charAt(0))){
                                             System.out.println("adding to variableList : readValue = " + readValue);
@@ -226,8 +218,7 @@ public class Main {
                                             }
                                         }
                                     }
-                                }
-                                else {
+                                } else {
                                     doWork(predictiveTable[lhsMap.get(stackHolder)][rhsMap.get("" + readValue.charAt(readIter))], myStack);
                                 }
                                 stackHolder = myStack.pop();
@@ -250,14 +241,13 @@ public class Main {
         if(state >= 3 && !readValue.equals("END.")){
             System.out.println("ERROR ( line " + lineCounter + " ): END. is expected");
             return false;
-        }
-        else{
+        } else {
             br.reset();
             return true;
         }
     }
 
-    private static void partThree(BufferedReader br, BufferedWriter bw) throws IOException { // Austin? :P
+    private static void partThree(BufferedReader br) throws IOException { // Austin? :P
         System.out.println("======================");
         System.out.println("| Translation Phase 3");
         System.out.println("======================");
@@ -266,61 +256,46 @@ public class Main {
         String lineIn;
         FileWriter writer = new FileWriter(".//src//com//rsh//cpsc323//program.cpp");
 
-
         while (br.ready())
         {
             lineIn = br.readLine();
-            if(lineIn.contains("PROGRAM"))
-            {
+            if(lineIn.contains("PROGRAM")) {
                 writer.write("#include <iostream>\n");
                 writer.write("using namespace std;\n");
                 writer.write("int main()\n");
                 writer.write("{\n");
             }
-            if(lineIn.contains("INTEGER :"))
-            {
+            if(lineIn.contains("INTEGER :")) {
                 writer.write("\tint");
-                writer.write(lineIn.substring(9)+"\n");
+                writer.write(lineIn.substring(9) + "\n"); // this may be a problem...
             }
-            if(lineIn.contains("BEGIN"))
-            {
+            if(lineIn.contains("BEGIN")) {
                 begin = true;
             }
-            if(lineIn.contains("END"))
-            {
+            if(lineIn.contains("END")) {
                 begin = false;
                 writer.write("\treturn 0;\n");
                 writer.write("}\n");
             }
-            if(begin && !lineIn.contains("BEGIN"))
-            {
-                if(lineIn.contains("PRINT"))
-                {
+            if(begin && !lineIn.contains("BEGIN")) {
+                if(lineIn.contains("PRINT")) {
                     writer.write("\tcout<<");
                     lineIn = lineIn.replace('(', ' ');
-
                     lineIn = lineIn.replace(')', ' ');
-                    for(int index = 6; index < lineIn.length()-3; index++)
-                    {
-                        if(lineIn.charAt(index) != ' ')
-                        {
+                    for(int index = 6; index < lineIn.length()-3; index++) {
+                        if(lineIn.charAt(index) != ' ') {
                             writer.write(lineIn.charAt(index));
                         }
                     }
                     writer.write("<<endl;\n");
-                }
-                else
-                {
-                    if(!lineIn.contains("BEGIN"))
-                    {
+                } else {
+                    if(!lineIn.contains("BEGIN")) {
                         writer.write('\t'+lineIn+"\n");
                     }
                 }
             }
-
         }
         writer.close();
-
     }
 
     public static void main(String[] args) throws IOException {
@@ -354,7 +329,7 @@ public class Main {
 
         // At this point.. we need to convert our validated input into Source Code
         bw = new BufferedWriter(new FileWriter(".//src//com//rsh//cpsc323//finalv3.txt"));
-        partThree(br, bw); // Begin Part 3
+        partThree(br); // Begin Part 3
         br.close(); bw.close();
     }
 }
