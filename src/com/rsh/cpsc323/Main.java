@@ -15,8 +15,6 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Vector;
 
-
-
 public class Main {
 
     private static String rhsIndex[] = {";",")","+","-","*","/",",","(","P","Q","R","S","0","1","2","3","4","5","6","7","8","9","PROGRAM","END.","INTEGER","PRINT",":","$","BEGIN", "="};
@@ -190,16 +188,6 @@ public class Main {
                             System.out.println("ERROR ( line " + lineCounter + " ): , is missing");
                             return false;
                         } else if(rhsMap.get(readValue) == null || readValue.equals("P") || readValue.equals("Q") || readValue.equals("R") || readValue.equals("S")) {
-                            if ((stackHolder.equals("J") && !rhsMap.containsKey(readValue))) {
-                                System.out.println("Intercepting odd case");
-                            } else if (((stackHolder.equals("Z")) && !variableList.contains(readValue))) { // added temp
-                                System.out.println("stackHolder is Z, variableList does not contain " + readValue); // added temp
-                                return false;
-                            } else if (((stackHolder.equals("J")) && !variableList.contains(readValue))) { // added temp
-                                System.out.println("ERROR ( line " + lineCounter + " ): Unknown identifier");
-                                return false;
-                            }
-
                             int readIter = 0;
                             while(readIter < readValue.length()){
                                 if(stackHolder.contains("55") || rhsMap.get("" + readValue.charAt(readIter)) == null){ // Checks if not a valid character in table
