@@ -1,15 +1,23 @@
-PROGRAM S2017;
-// This program computes and prints the value
-    Of an expression //
+// Program Name: Spring 2017
+    Final Project
 
-//declare variables //
-INTEGER: P1 ,   Q2S ,   R, S12  ;
+
+---------------------------------//
+PROGRAM S2017;
+
+
+INTEGER: P12, PRS, Q3; // DECLARE VARIABLES //
+
+
 BEGIN
-    P1      = -3 ;
-    Q2S =   4 ;
-    R       = 5 ;
-PRINT( R ); // display R //
-// compute the value of the expression //
-S12 = P1 * ( Q2S + 2*R)   ;
-PRINT(S12   ); // print the value of S12 //
+PRS = 121 ;
+PRINT( PRS) ;
+
+Q3 = 10 ;
+
+P12 =   PRS - Q3*(3 + PRS * Q3) ; // FIND THE VALUE OF P12 //
+
+// DISPLAY THE P12 VALUE AND Q3 VALUE //
+PRINT (P12)    ;
+PRINT   ( Q3 );
 END.

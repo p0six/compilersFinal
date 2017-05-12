@@ -193,20 +193,24 @@ public class Main {
                                 if(stackHolder.contains("55") || rhsMap.get("" + readValue.charAt(readIter)) == null){ // Checks if not a valid character in table
                                     System.out.println("ERROR ( line " + lineCounter + " ): Invalid identifier");
                                     return false;
-                                } else if(stackHolder.equals("" + readValue.charAt(readIter))){ // Checks for input match
-                                    readIter++;	// Increments the read iterator
-                                    if(readIter == readValue.length()){
-                                        if(state <= 1 && Character.isLetter(readValue.charAt(0))){
+                                } else if(stackHolder.equals("" + readValue.charAt(readIter))) { // Checks for input match
+                                    readIter++;    // Increments the read iterator
+                                    if (readIter == readValue.length()) {
+                                        if (state <= 1 && Character.isLetter(readValue.charAt(0))) {
                                             System.out.println("adding to variableList : readValue = " + readValue);
                                             variableList.addElement(readValue);
                                         } else {
-                                            if(Character.isLetter(readValue.charAt(0)) && !variableList.contains(readValue)){
+                                            if (Character.isLetter(readValue.charAt(0)) && !variableList.contains(readValue)) {
                                                 System.out.println("ERROR ( line " + lineCounter + " ): Unknown identifier");
                                                 return false;
                                             }
                                         }
                                     }
+                                } else if (stackHolder.equals("^")) {
                                 } else {
+                                    System.out.println("stackHolder = " + stackHolder);
+                                    System.out.println("readIter = " + readIter);
+                                    System.out.println("myStack = " + myStack);
                                     doWork(predictiveTable[lhsMap.get(stackHolder)][rhsMap.get("" + readValue.charAt(readIter))], myStack);
                                 }
                                 stackHolder = myStack.pop();
@@ -216,8 +220,7 @@ public class Main {
                         } else if ((stackHolder.equals("J") && !variableList.contains(readValue)) && !rhsMap.containsKey(readValue)) {
                             System.out.println("ERROR ( line " + lineCounter + " ): Unknown identifier");
                             return false;
-                        }
-                        else{
+                        } else{
                             doWork(predictiveTable[lhsMap.get(stackHolder)][rhsMap.get(readValue)], myStack);
                         }
                     }
