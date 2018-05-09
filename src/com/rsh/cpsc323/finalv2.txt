@@ -1,5 +1,5 @@
 PROGRAM S2017 ; 
-INTEGER : P13 , PRS , Q3 ; 
+INTEGER : P12 , PRS , Q3 ; 
 BEGIN
 PRS = 121 ; 
 PRINT ( PRS ) ; 

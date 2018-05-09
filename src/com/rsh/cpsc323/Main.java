@@ -174,7 +174,7 @@ public class Main {
                             state++; // Increments the state
                         }
                         break;
-                    } else if(rhsMap.get(stackHolder) != null){ //  Checks if stackHolder is a member of rhsMap
+                    } else if(rhsMap.get(stackHolder) != null){ //  Checks if sackHolder is a member of rhsMap
                         System.out.println("ERROR ( line " + lineCounter + " ): " + stackHolder + " is expected or missing");
                         return false;
                     } else {
@@ -206,7 +206,7 @@ public class Main {
                                             }
                                         }
                                     }
-                                } else if (stackHolder.equals("^")) {
+                                } else if (stackHolder.equals("^")) { // this is where it hit...
                                 } else {
                                     System.out.println("stackHolder = " + stackHolder);
                                     System.out.println("readIter = " + readIter);
